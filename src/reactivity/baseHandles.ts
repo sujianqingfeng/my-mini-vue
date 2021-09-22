@@ -1,25 +1,37 @@
+import { isObject, extend } from "../shared";
 import { track, trigger } from "./effect";
-import { ReactiveFlags } from "./reactive";
+import { reactive, ReactiveFlags, readonly } from "./reactive";
 
 // 全局变量  只执行一次
 const get = createGetter();
 const set = createSetter();
-const readOnlyGet = createGetter(true);
+const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true, true);
 
 // 创建get 函数
-function createGetter(isReadOnly = false) {
+function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key) {
     if (key === ReactiveFlags.IS_REACTIVE) {
-      return !isReadOnly;
+      return !isReadonly;
     } else if (key === ReactiveFlags.IS_READONLY) {
-      return isReadOnly;
+      return isReadonly;
     }
 
     const res = Reflect.get(target, key);
 
-    if (!isReadOnly) {
+    if (shallow) {
+      return res;
+    }
+
+    // 循环调用 直至不是一个object对象
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
+    }
+
+    if (!isReadonly) {
       track(target, key);
     }
+
     return res;
   };
 }
@@ -40,7 +52,7 @@ export const mutableHandles = {
 };
 
 export const readonlyHandles = {
-  get: readOnlyGet,
+  get: readonlyGet,
   set: function (target, key, value) {
     console.warn(
       `readonly not call set ,target:${target},key:${key},value:${value}`
@@ -50,3 +62,7 @@ export const readonlyHandles = {
     return true;
   },
 };
+
+export const shallowReadonlyHandles = extend({}, readonlyHandles, {
+  get: shallowReadonlyGet,
+});
