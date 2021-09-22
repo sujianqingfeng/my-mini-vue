@@ -59,6 +59,7 @@ export function effect(fn, options: any = {}) {
 const targetMap = new Map();
 // 收集依赖
 export function track(target, key) {
+  if (!isTracking()) return;
   let depsMap = targetMap.get(target);
 
   if (!depsMap) {
@@ -73,10 +74,8 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
-  // 直接访问属性  不通过effect函数 不用收集依赖
-  if (!activeEffect) return;
-
-  if (!shouldTrack) return;
+  // 处理重复依赖
+  if (dep.has(activeEffect)) return;
 
   dep.add(activeEffect);
   // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
@@ -99,4 +98,9 @@ export function trigger(target, key) {
 
 export function stop(runner) {
   runner.effect.stop();
+}
+
+function isTracking() {
+  // 需要收集  同时 通过effect函数触发依赖
+  return shouldTrack && activeEffect !== undefined;
 }
