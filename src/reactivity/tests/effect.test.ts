@@ -82,8 +82,8 @@ describe("effect", () => {
 
     // stop 停止响应
     stop(runner);
-    // obj.foo++; // 如何这样写 会重新生成依赖 从而会触发依赖 无法通过测试
-    obj.foo = 3;
+    obj.foo++;
+    // obj.foo = 3;
     expect(dummy).toBe(2);
 
     runner();

@@ -1,5 +1,9 @@
 import { extend } from "../shared";
 
+// 全局变量 用来存放 当前effect
+let activeEffect;
+// 是否应该被收集
+let shouldTrack;
 class ReactiveEffect {
   _fn: Function;
   deps = [];
@@ -10,8 +14,16 @@ class ReactiveEffect {
   }
 
   run() {
+    // stop 下的状态
+    if (!this.active) {
+      return this._fn();
+    }
+
     activeEffect = this;
-    return this._fn();
+    shouldTrack = true;
+    const result = this._fn();
+    shouldTrack = false;
+    return result;
   }
 
   stop() {
@@ -32,8 +44,6 @@ function clearUpEffect(effect) {
   });
 }
 
-// 全局变量 用来存放 当前effect
-let activeEffect;
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn);
 
@@ -62,6 +72,11 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
+
+  // 直接访问属性  不通过effect函数 不用收集依赖
+  if (!activeEffect) return;
+
+  if (!shouldTrack) return;
 
   dep.add(activeEffect);
   // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
