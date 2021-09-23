@@ -74,6 +74,11 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
+  trackEffects(dep);
+}
+
+// 抽离依赖收集 ref 要用
+export function trackEffects(dep) {
   // 处理重复依赖
   if (dep.has(activeEffect)) return;
 
@@ -87,6 +92,11 @@ export function trigger(target, key) {
   const depsMap = targetMap.get(target);
   const dep = depsMap.get(key);
 
+  triggerEffects(dep);
+}
+
+//抽离触发依赖 ref要用
+export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler();
@@ -100,7 +110,7 @@ export function stop(runner) {
   runner.effect.stop();
 }
 
-function isTracking() {
+export function isTracking() {
   // 需要收集  同时 通过effect函数触发依赖
   return shouldTrack && activeEffect !== undefined;
 }
