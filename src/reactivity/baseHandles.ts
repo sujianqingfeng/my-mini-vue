@@ -8,9 +8,15 @@ const set = createSetter();
 const readonlyGet = createGetter(true);
 const shallowReadonlyGet = createGetter(true, true);
 
-// 创建get 函数
+/**
+ * 创建get 函数
+ *
+ * @param isReadonly
+ * @param shallow
+ * @returns
+ */
 function createGetter(isReadonly = false, shallow = false) {
-  return function get(target, key) {
+  return function get(target: object, key: string) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly;
     } else if (key === ReactiveFlags.IS_READONLY) {
@@ -36,21 +42,30 @@ function createGetter(isReadonly = false, shallow = false) {
   };
 }
 
-// 创建set函数
+/**
+ * 创建set函数
+ *
+ * @returns
+ */
 function createSetter() {
-  return function set(targe, key, value) {
+  return function set(targe: object, key: string, value: any) {
     const res = Reflect.set(targe, key, value);
 
     trigger(targe, key);
     return res;
   };
 }
-
+/**
+ * 变化的 proxy handles
+ */
 export const mutableHandles = {
   get,
   set,
 };
 
+/**
+ * 可读取的proxy handles
+ */
 export const readonlyHandles = {
   get: readonlyGet,
   set: function (target, key, value) {
@@ -63,6 +78,9 @@ export const readonlyHandles = {
   },
 };
 
+/**
+ * 表层可读的proxy handles
+ */
 export const shallowReadonlyHandles = extend({}, readonlyHandles, {
   get: shallowReadonlyGet,
 });

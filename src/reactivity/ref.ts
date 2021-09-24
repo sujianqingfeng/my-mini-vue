@@ -2,11 +2,24 @@ import { hasChanged, isObject } from "../shared";
 import { isTracking, trackEffects, triggerEffects } from "./effect";
 import { reactive } from "./reactive";
 
+const IS_REF_SYMBOL = Symbol("__v_isRef");
+
+// Ref 实现
 class RefImpl {
+  /**
+   * 处理之后的值
+   */
   private _value: any;
-  private _rawValue;
+  /**
+   * 原始值
+   */
+  private _rawValue: any;
+  /**
+   * 依赖容器
+   */
   public dep;
-  public __v_isRef = true;
+  // ref 标识
+  [IS_REF_SYMBOL] = true;
   constructor(value) {
     this._value = convert(value);
     this._rawValue = value;
@@ -28,26 +41,46 @@ class RefImpl {
     }
   }
 
+  /**
+   * 判断是否需要收集
+   * 如果value是一个对象 就交给了reactive处理 就不需要本身的dep来进行依赖收集了
+   *
+   * @returns
+   */
   shouldTrack() {
     return !isObject(this._rawValue);
   }
 }
 
-export function ref(value) {
+/**
+ * 创建单值的响应式
+ *
+ * @param value
+ * @returns
+ */
+export function ref(value: any) {
   return new RefImpl(value);
 }
 
+/**
+ *
+ * 针对对象中存在ref的处理
+ *
+ * @param raw
+ * @returns
+ */
 export function proxyRefs(raw) {
   return new Proxy(raw, {
     get(target, key) {
       const res = Reflect.get(target, key);
-
+      // 解构出原值
       return unRef(res);
     },
 
     set(target, key, newValue) {
       const res = Reflect.get(target, key);
 
+      // 本身是一个ref但是设置的值不是ref类型
       if (isRef(res) && !isRef(newValue)) {
         return (res.value = newValue);
       } else {
@@ -64,7 +97,7 @@ export function proxyRefs(raw) {
  * @returns
  */
 export function isRef(ref) {
-  return !!ref.__v_isRef;
+  return !!ref[IS_REF_SYMBOL];
 }
 
 /**

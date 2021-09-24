@@ -5,35 +5,85 @@ import {
 } from "./baseHandles";
 
 export enum ReactiveFlags {
-  IS_REACTIVE = "_v_isReactive",
-  IS_READONLY = "_v_isReadonly",
+  /**
+   * 响应标记
+   */
+  IS_REACTIVE = "__v_isReactive",
+  /**
+   * 可读标记
+   */
+  IS_READONLY = "__v_isReadonly",
 }
 
-export function reactive(raw) {
+/**
+ *
+ * 响应式
+ *
+ * @param raw
+ * @returns
+ */
+export function reactive(raw: object) {
   return createReactiveObject(raw, mutableHandles);
 }
 
-export function readonly(raw) {
+/**
+ * 可读
+ *
+ * @param raw
+ * @returns
+ */
+export function readonly(raw: object) {
   return createReactiveObject(raw, readonlyHandles);
 }
 
-export function shallowReadonly(raw) {
+/**
+ *
+ * 表层可读
+ *
+ * @param raw
+ * @returns
+ */
+export function shallowReadonly(raw: object) {
   return createReactiveObject(raw, shallowReadonlyHandles);
 }
 
-export function isReactive(value) {
+/**
+ * 创建响应式对象
+ *
+ * @param raw
+ * @param baseHandle
+ * @returns
+ */
+function createReactiveObject(raw: any, baseHandle: ProxyHandler<any>) {
+  return new Proxy(raw, baseHandle);
+}
+
+/**
+ * 判断是否是一个响应式数据
+ *
+ * @param value
+ * @returns
+ */
+export function isReactive(value: any) {
   return !!value[ReactiveFlags.IS_REACTIVE];
 }
 
-export function isReadonly(value) {
+/**
+ * 判断是否是一个readonly数据
+ *
+ * @param value
+ * @returns
+ */
+export function isReadonly(value: any) {
   return !!value[ReactiveFlags.IS_READONLY];
 }
 
-// 判断对象是否是一个响应对象  或者 可读对象
+/**
+ * 判断对象是否是一个响应对象  或者 可读对象
+ *
+ * @param value
+ * @returns
+ */
 export function isProxy(value) {
   return isReactive(value) || isReadonly(value);
-}
-
-function createReactiveObject(raw: any, baseHandle) {
-  return new Proxy(raw, baseHandle);
 }
