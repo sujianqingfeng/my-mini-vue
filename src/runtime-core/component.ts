@@ -16,9 +16,9 @@ export function setupComponent(instance) {
 }
 
 function setupStatefulComponent(instance: any) {
-  const component = instance.type;
+  const Component = instance.type;
 
-  const { setup } = component;
+  const { setup } = Component;
 
   if (setup) {
     const setupResult = setup();
@@ -35,10 +35,11 @@ function handleSetupResult(instance, setupResult: any) {
 
   finishComponentSetup(instance);
 }
-function finishComponentSetup(instance: any) {
-  const component = instance.type;
 
-  if (!component.render) {
-    instance.render = component.render;
+function finishComponentSetup(instance: any) {
+  const Component = instance.type;
+
+  if (!instance.render) {
+    instance.render = Component.render;
   }
 }
