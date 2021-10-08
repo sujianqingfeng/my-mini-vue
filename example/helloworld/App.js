@@ -1,9 +1,8 @@
+import {h} from '../../lib/mini-vue.esm.js'
 export default {
 
   render() {
-
-    return this.msg
-
+    return h('div',this.msg)
   },
 
   setup(){

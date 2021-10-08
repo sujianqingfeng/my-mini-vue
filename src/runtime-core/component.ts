@@ -1,4 +1,4 @@
-export function createComponentInstance(vnode, container) {
+export function createComponentInstance(vnode) {
   const component = {
     vnode,
     type: vnode.type,
