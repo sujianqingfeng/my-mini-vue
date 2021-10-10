@@ -33,7 +33,7 @@ function setupStatefulComponent(instance: any) {
 function handleSetupResult(instance, setupResult: any) {
   // 返回对象
   if (typeof setupResult === "object") {
-    instance.setupResult = setupResult;
+    instance.setupState = setupResult;
   }
 
   // TODO function

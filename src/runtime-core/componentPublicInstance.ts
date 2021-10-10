@@ -4,10 +4,10 @@ const publicPropertiesMap = {
 
 export const componentPublicHandler = {
   get({ _: instance }, key) {
-    const { setupResult } = instance;
+    const { setupState } = instance;
 
-    if (key in setupResult) {
-      return setupResult[key];
+    if (key in setupState) {
+      return setupState[key];
     }
 
     const publicGetter = publicPropertiesMap[key];
