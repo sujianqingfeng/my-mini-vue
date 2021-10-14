@@ -1,3 +1,4 @@
+import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
 export function render(vnode, container) {
@@ -5,9 +6,9 @@ export function render(vnode, container) {
 }
 
 function patch(vnode: any, container: any) {
-  if (typeof vnode.type === "string") {
+  if (vnode.shapeFlags & ShapeFlags.ELEMENT) {
     processElement(vnode, container);
-  } else if (typeof vnode.type === "object") {
+  } else if (vnode.shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {
     processComponent(vnode, container);
   }
 }
@@ -25,16 +26,16 @@ function processElement(vnode: any, container: any) {
 function mountElement(vnode: any, container: any) {
   const el = (vnode.el = document.createElement(vnode.type));
 
-  const { props, children } = vnode;
+  const { props, children, shapeFlags } = vnode;
   // props
   for (const key in props) {
     el.setAttribute(key, props[key]);
   }
 
   // children
-  if (typeof children === "string") {
+  if (shapeFlags & ShapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
-  } else if (Array.isArray(children)) {
+  } else if (shapeFlags & ShapeFlags.ARRAY_CHILDREN) {
     mountChildren(children, el);
   }
   container.append(el);
