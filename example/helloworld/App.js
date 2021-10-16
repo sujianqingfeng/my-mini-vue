@@ -1,10 +1,15 @@
 import {h} from '../../lib/mini-vue.esm.js'
-window.self = null
 export default {
 
   render() {
-    window.self = this
-    return h('div',{id:'div'},[
+    return h('div',
+    {
+      id:'div',
+      onClick:()=>{
+        console.log('click');
+      }
+    },
+    [
       h('p',{},this.msg),
       h('p',{},'mini-vue')
     ])
