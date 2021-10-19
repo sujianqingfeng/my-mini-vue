@@ -1,4 +1,5 @@
 import {h} from '../../lib/mini-vue.esm.js'
+import {Foo} from './Foo.js'
 export default {
 
   render() {
@@ -11,7 +12,8 @@ export default {
     },
     [
       h('p',{},this.msg),
-      h('p',{},'mini-vue')
+      h('p',{},'mini-vue'),
+      h(Foo,{count:1})
     ])
   },
 
