@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "jest": "jest",
-    "build": "npx rollup -c rollup.config.js"
+    "build": "npx rollup -c rollup.config.js",
+    "watch": "npx rollup -c rollup.config.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",

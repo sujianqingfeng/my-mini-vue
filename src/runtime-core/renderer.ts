@@ -27,8 +27,7 @@ function mountElement(vnode: any, container: any) {
   const el = (vnode.el = document.createElement(vnode.type));
 
   const { props, children, shapeFlags } = vnode;
-  // props
-  const isOn = (key: string) => /^on[A-Z]/.test(key);
+
   for (const key in props) {
     const val = props[key];
     if (isOn(key)) {
