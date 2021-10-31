@@ -1,4 +1,4 @@
-import { h, renderSlots } from "../../lib/mini-vue.esm.js";
+import { h, renderSlots, createTextVNode } from "../../lib/mini-vue.esm.js";
 
 export const Foo = {
   setup(props, { emit }) {
@@ -24,6 +24,7 @@ export const Foo = {
         renderSlots(this.$slots, "header", { age: 1 }),
         `Foo:${this.count}`,
         renderSlots(this.$slots, "footer"),
+        createTextVNode("i am text node"),
       ]
     );
   },
