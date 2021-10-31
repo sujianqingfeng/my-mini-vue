@@ -1,7 +1,15 @@
-import { h, renderSlots, createTextVNode } from "../../lib/mini-vue.esm.js";
+import {
+  h,
+  renderSlots,
+  createTextVNode,
+  getCurrentInstance,
+} from "../../lib/mini-vue.esm.js";
 
 export const Foo = {
+  name: "foo",
   setup(props, { emit }) {
+    console.log("foo instance", getCurrentInstance());
+
     // 这里会有警告
     props.count++;
 

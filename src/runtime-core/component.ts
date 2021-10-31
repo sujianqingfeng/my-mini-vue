@@ -37,9 +37,10 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component;
 
   if (setup) {
-    const emit = instance.emit.bind(null, instance);
-    const setupResult = setup(shallowReadonly(instance.props), { emit });
+    setCurrentInstance(instance)
+    const setupResult = setup(shallowReadonly(instance.props), { emit:instance.emit.bind(null, instance); });
     handleSetupResult(instance, setupResult);
+    setCurrentInstance(null)
   }
 }
 function handleSetupResult(instance, setupResult: any) {
@@ -60,3 +61,15 @@ function finishComponentSetup(instance: any) {
     instance.render = Component.render;
   }
 }
+
+
+  
+let currentInstance = null
+
+function setCurrentInstance(instance) {
+  currentInstance = instance
+}
+
+export function getCurrentInstance() {
+  return currentInstance
+};

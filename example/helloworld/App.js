@@ -1,6 +1,7 @@
-import { h } from "../../lib/mini-vue.esm.js";
+import { h, getCurrentInstance } from "../../lib/mini-vue.esm.js";
 import { Foo } from "./Foo.js";
 export default {
+  name: "app",
   render() {
     return h(
       "div",
@@ -31,6 +32,7 @@ export default {
   },
 
   setup() {
+    console.log("app instance", getCurrentInstance());
     return {
       msg: "hello",
     };
