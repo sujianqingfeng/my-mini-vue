@@ -13,12 +13,19 @@ export default {
       [
         h("p", {}, this.msg),
         h("p", {}, "mini-vue"),
-        h(Foo, {
-          count: 1,
-          onFooFoo: (params) => {
-            console.log("foo", params);
+        h(
+          Foo,
+          {
+            count: 1,
+            onFooFoo: (params) => {
+              console.log("foo", params);
+            },
           },
-        }),
+          {
+            header: ({ age }) => h("p", {}, "header" + age),
+            footer: () => h("p", {}, "footer"),
+          }
+        ),
       ]
     );
   },
