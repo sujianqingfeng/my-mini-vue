@@ -1,4 +1,4 @@
-import { h, getCurrentInstance } from "../../lib/mini-vue.esm.js";
+import { h, getCurrentInstance, provide } from "../../lib/mini-vue.esm.js";
 import { Foo } from "./Foo.js";
 export default {
   name: "app",
@@ -32,6 +32,9 @@ export default {
   },
 
   setup() {
+    provide("test-inject", "foo");
+    provide("bar");
+
     console.log("app instance", getCurrentInstance());
     return {
       msg: "hello",

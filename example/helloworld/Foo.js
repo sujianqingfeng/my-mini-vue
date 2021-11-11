@@ -3,6 +3,7 @@ import {
   renderSlots,
   createTextVNode,
   getCurrentInstance,
+  inject,
 } from "../../lib/mini-vue.esm.js";
 
 export const Foo = {
@@ -17,7 +18,10 @@ export const Foo = {
       emit("foo-foo", "i am params");
     };
 
-    return { handleFooClick };
+    const testInjectFoo = inject("test-inject");
+    const testInjectBar = inject("bar", "defaultBar");
+
+    return { handleFooClick, testInjectFoo, testInjectBar };
   },
 
   render() {
@@ -33,6 +37,8 @@ export const Foo = {
         `Foo:${this.count}`,
         renderSlots(this.$slots, "footer"),
         createTextVNode("i am text node"),
+        h("p", {}, this.testInjectFoo),
+        h("p", {}, this.testInjectBar),
       ]
     );
   },
