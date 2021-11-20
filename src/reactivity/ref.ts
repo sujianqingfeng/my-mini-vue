@@ -2,8 +2,6 @@ import { hasChanged, isObject } from "../shared";
 import { isTracking, trackEffects, triggerEffects } from "./effect";
 import { reactive } from "./reactive";
 
-const IS_REF_SYMBOL = Symbol("__v_isRef");
-
 // Ref 实现
 class RefImpl {
   /**
@@ -19,7 +17,7 @@ class RefImpl {
    */
   public dep;
   // ref 标识
-  [IS_REF_SYMBOL] = true;
+  public readonly __v_isRef = true;
   constructor(value) {
     this._value = convert(value);
     this._rawValue = value;
@@ -97,7 +95,7 @@ export function proxyRefs(raw) {
  * @returns
  */
 export function isRef(ref) {
-  return !!ref[IS_REF_SYMBOL];
+  return ref && !!ref.__v_isRef;
 }
 
 /**
