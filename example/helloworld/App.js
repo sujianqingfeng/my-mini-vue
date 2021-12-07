@@ -1,5 +1,6 @@
 import { h, getCurrentInstance, provide,ref } from "../../lib/mini-vue.esm.js";
 import { Foo } from "./Foo.js";
+import UpdateProps from './UpdateProps.js'
 export default {
   name: "app",
   render() {
@@ -28,7 +29,9 @@ export default {
             footer: () => h("p", {}, "footer"),
           }
         ),
-        h('p',{},"点击我，count:",this.count)
+        h('p',{},"点击我，count:",this.count),
+        h('p',{},'下面是更新props'),
+        h(UpdateProps)
       ]
     );
   },

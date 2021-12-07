@@ -5,7 +5,11 @@ import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
 
 export function createRenderer(options) {
-  const { createElement, patchProp, insert } = options;
+  const {
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert,
+  } = options;
 
   function render(vnode, container) {
     patch(null, vnode, container, null);
@@ -72,16 +76,45 @@ export function createRenderer(options) {
   function patchElement(n1, n2, container) {
     // update
     console.log("patchElement");
+
+    const prevProps = n1.props || {};
+    const nextProps = n2.props || {};
+
+    const el = (n2.el = n1.el);
+
+    patchProps(el, prevProps, nextProps);
+  }
+
+  function patchProps(el, oldProps, newProps) {
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
+        const oldProp = oldProps[key];
+        const newProp = newProps[key];
+
+        if (newProp !== oldProp) {
+          hostPatchProp(el, key, oldProp, newProp);
+        }
+      }
+
+      if (oldProps) {
+        // 老节点存在 新节点不存在
+        for (const key in oldProps) {
+          if (!newProps[key]) {
+            hostPatchProp(el, key, oldProps[key], null);
+          }
+        }
+      }
+    }
   }
 
   function mountElement(vnode: any, container: any, parentComponent) {
-    const el = (vnode.el = createElement(vnode.type));
+    const el = (vnode.el = hostCreateElement(vnode.type));
 
     const { props, children, shapeFlags } = vnode;
 
     for (const key in props) {
       const val = props[key];
-      patchProp(el, key, val);
+      hostPatchProp(el, key, null, val);
     }
 
     // children
@@ -90,7 +123,7 @@ export function createRenderer(options) {
     } else if (shapeFlags & ShapeFlags.ARRAY_CHILDREN) {
       mountChildren(vnode, el, parentComponent);
     }
-    insert(el, container);
+    hostInsert(el, container);
   }
 
   function mountChildren(vnodes, container, parentComponent) {
