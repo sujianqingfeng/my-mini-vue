@@ -1,6 +1,10 @@
-import { h, getCurrentInstance, provide,ref } from "../../lib/mini-vue.esm.js";
+import { h, getCurrentInstance, provide, ref } from "../../lib/mini-vue.esm.js";
 import { Foo } from "./Foo.js";
-import UpdateProps from './UpdateProps.js'
+import UpdateProps from "./UpdateProps.js";
+
+import UpdateArrayToText from "./UpdateArrayToText.js";
+import UpdateTextToArray from "./UpdateTextToArray.js";
+
 export default {
   name: "app",
   render() {
@@ -10,7 +14,7 @@ export default {
         id: "div",
         onClick: () => {
           console.log("click");
-          this.increment()
+          this.increment();
         },
       },
       [
@@ -29,9 +33,11 @@ export default {
             footer: () => h("p", {}, "footer"),
           }
         ),
-        h('p',{},"点击我，count:",this.count),
-        h('p',{},'下面是更新props'),
-        h(UpdateProps)
+        h("p", {}, "点击我，count:", this.count),
+        h("p", {}, "下面是更新props"),
+        h(UpdateProps),
+        // h(UpdateArrayToText),
+        h(UpdateTextToArray),
       ]
     );
   },
@@ -42,16 +48,15 @@ export default {
 
     console.log("app instance", getCurrentInstance());
 
-    const count = ref(0)
+    const count = ref(0);
 
-    const increment = ()=>{
-
-      count.value ++ 
-    }
+    const increment = () => {
+      count.value++;
+    };
     return {
       msg: "hello",
-      increment ,
-      count
+      increment,
+      count,
     };
   },
 };

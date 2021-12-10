@@ -41,9 +41,37 @@ function insert(el, parent) {
   parent.append(el);
 }
 
+/**
+ * 删除元素
+ *
+ * @param el
+ */
+function remove(el) {
+  const parent = el.parentNode;
+  if (parent) {
+    parent.removeChild(el);
+  }
+}
+
+/**
+ * 修改节点为文本
+ *
+ * @param el
+ * @param text
+ */
+function setElementText(el, text) {
+  el.textContent = text;
+}
+
 // TODO 更多的dom操作方法
 
-const renderer: any = createRenderer({ createElement, patchProp, insert });
+const renderer: any = createRenderer({
+  createElement,
+  patchProp,
+  insert,
+  remove,
+  setElementText,
+});
 
 export function createApp(...args) {
   // 这里有点绕  这里调用的实际是crateApp.ts中createAppAPI中的createApp
