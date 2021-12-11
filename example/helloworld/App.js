@@ -4,6 +4,7 @@ import UpdateProps from "./UpdateProps.js";
 
 import UpdateArrayToText from "./UpdateArrayToText.js";
 import UpdateTextToArray from "./UpdateTextToArray.js";
+import UpdateArrayToArray from "./UpdateArrayToArray.js";
 
 export default {
   name: "app",
@@ -37,7 +38,8 @@ export default {
         h("p", {}, "下面是更新props"),
         h(UpdateProps),
         // h(UpdateArrayToText),
-        h(UpdateTextToArray),
+        // h(UpdateTextToArray),
+        h(UpdateArrayToArray),
       ]
     );
   },
