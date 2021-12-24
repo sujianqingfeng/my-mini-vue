@@ -194,6 +194,54 @@ export function createRenderer(options) {
       }
     } else {
       // 中间乱序的部分
+
+      const s1 = i;
+      const s2 = i;
+      const toBePatched = e2 - s2 + 1;
+      let patched = 0;
+
+      const keyToNewIndexMap = new Map();
+
+      for (let i = s2; i <= e2; i++) {
+        const nextChild = c2[i];
+        keyToNewIndexMap.set(nextChild.key, i);
+      }
+
+      for (let i = s1; i <= e1; i++) {
+        const pervChild = c1[i];
+
+        // 删除多余的旧节点
+        if (patched >= toBePatched) {
+          hostRemove(pervChild.el);
+          continue;
+        }
+
+        let newIndex;
+        // null undefined
+        // 存在key
+        if (pervChild.key !== null) {
+          newIndex = keyToNewIndexMap.get(pervChild.key);
+        } else {
+          // 不存在就遍历
+          for (let j = s2; j < e2; j++) {
+            if (isSomeVNodeType(pervChild, c2[j])) {
+              newIndex = j;
+              break;
+            }
+          }
+        }
+
+        // 新节点里面找不到 就删除
+        if (newIndex === undefined) {
+          hostRemove(pervChild.el);
+        } else {
+          // 存在 就patch
+          patch(pervChild, c2[newIndex], container, parentComponent, null);
+
+          // 记录匹配数  用来删除多余的旧节点
+          patched++;
+        }
+      }
     }
   }
 

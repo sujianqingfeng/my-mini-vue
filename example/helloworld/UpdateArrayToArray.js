@@ -49,12 +49,32 @@ export default {
     // B A
     // i = 0 e1 = 1 e2 = -1
     // 新节点比老节点少 则删除
+    // const prevChild = [
+    //   h("p", { key: "C" }, "C"),
+    //   h("p", { key: "B" }, "B"),
+    //   h("p", { key: "A" }, "A"),
+    // ];
+    // const nextChild = [h("p", { key: "B" }, "B"), h("p", { key: "A" }, "A")];
+
+    // 乱序部分
+
+    // A B F C D   |  A B C F D
+    // A C B D
+
     const prevChild = [
+      h("p", { key: "A" }, "A"),
+      h("p", { key: "B" }, "B"),
+      h("p", { key: "F" }, "F"),
+      h("p", { key: "C" }, "C"),
+      h("p", { key: "D" }, "D"),
+    ];
+
+    const nextChild = [
+      h("p", { key: "A" }, "A"),
       h("p", { key: "C" }, "C"),
       h("p", { key: "B" }, "B"),
-      h("p", { key: "A" }, "A"),
+      h("p", { key: "D" }, "D"),
     ];
-    const nextChild = [h("p", { key: "B" }, "B"), h("p", { key: "A" }, "A")];
 
     const prev = h("div", {}, prevChild);
     const next = h("div", {}, nextChild);
