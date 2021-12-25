@@ -58,19 +58,57 @@ export default {
 
     // 乱序部分
 
+    // 删除部分
     // A B F C D   |  A B C F D
     // A C B D
+
+    // const prevChild = [
+    //   h("p", { key: "A" }, "A"),
+    //   h("p", { key: "B" }, "B"),
+    //   h("p", { key: "F" }, "F"),
+    //   h("p", { key: "C" }, "C"),
+    //   h("p", { key: "D" }, "D"),
+    // ];
+
+    // const nextChild = [
+    //   h("p", { key: "A" }, "A"),
+    //   h("p", { key: "C" }, "C"),
+    //   h("p", { key: "B" }, "B"),
+    //   h("p", { key: "D" }, "D"),
+    // ];
+
+    // 移动部分
+    // A B C D
+    // A C B D
+
+    // const prevChild = [
+    //   h("p", { key: "A" }, "A"),
+    //   h("p", { key: "B" }, "B"),
+    //   h("p", { key: "C" }, "C"),
+    //   h("p", { key: "D" }, "D"),
+    // ];
+
+    // const nextChild = [
+    //   h("p", { key: "A" }, "A"),
+    //   h("p", { key: "C" }, "C"),
+    //   h("p", { key: "B" }, "B"),
+    //   h("p", { key: "D" }, "D"),
+    // ];
+
+    // 新增部分
+    // A B C D
+    // A C B F D
 
     const prevChild = [
       h("p", { key: "A" }, "A"),
       h("p", { key: "B" }, "B"),
-      h("p", { key: "F" }, "F"),
       h("p", { key: "C" }, "C"),
       h("p", { key: "D" }, "D"),
     ];
 
     const nextChild = [
       h("p", { key: "A" }, "A"),
+      h("p", { key: "F" }, "F"),
       h("p", { key: "C" }, "C"),
       h("p", { key: "B" }, "B"),
       h("p", { key: "D" }, "D"),

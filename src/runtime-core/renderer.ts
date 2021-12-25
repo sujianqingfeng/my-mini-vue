@@ -200,12 +200,21 @@ export function createRenderer(options) {
       const toBePatched = e2 - s2 + 1;
       let patched = 0;
 
+      // 新节点key对应在新节点中的索引位置
       const keyToNewIndexMap = new Map();
 
       for (let i = s2; i <= e2; i++) {
         const nextChild = c2[i];
         keyToNewIndexMap.set(nextChild.key, i);
       }
+
+      // 新节点索引 对应 老节点中的索引位置  从中间乱序开始 所以长度为toBePatched
+      const newIndexToOldIndexMap = new Array(toBePatched);
+      for (let i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0;
+
+      let moved = false;
+      // 用来存储上一个新节点的位置
+      let maxNewIndexSoFar = 0;
 
       for (let i = s1; i <= e1; i++) {
         const pervChild = c1[i];
@@ -235,11 +244,52 @@ export function createRenderer(options) {
         if (newIndex === undefined) {
           hostRemove(pervChild.el);
         } else {
+          //  只要判定 在新节点中不连续 就需要移动
+
+          if (maxNewIndexSoFar <= newIndex) {
+            maxNewIndexSoFar = newIndex;
+          } else {
+            moved = true;
+          }
+
+          // 存储 新节点在老节点中的位置
+          // 之所以要加1 是因为后续能够判断新增节点  虽然加了1 但是最长子序列的计算结果不会发生变化 因为计算的是位置
+          newIndexToOldIndexMap[newIndex - s2] = i + 1;
+
           // 存在 就patch
           patch(pervChild, c2[newIndex], container, parentComponent, null);
 
           // 记录匹配数  用来删除多余的旧节点
           patched++;
+        }
+      }
+
+      // 在patch之后，还存在位置不一致 或者 多节点的情况
+      // 所以需要移动 和新增
+
+      // 求出最长递增子序列
+      const increasingNewIndexSequence = moved
+        ? getSequence(newIndexToOldIndexMap)
+        : [];
+      let j = increasingNewIndexSequence.length - 1;
+
+      // 之所以倒叙 因为插入的时候确定锚点的时候  后面的锚点是确定不会在变化的
+      for (let i = toBePatched - 1; i >= 0; i--) {
+        const newIndex = s2 + i;
+        const nextChild = c2[newIndex];
+        const anchor = newIndex + 1 < l2 ? c2[newIndex + 1].el : null;
+
+        // 在老节点当中不存在 就需要新增 所以我们直接判断初始化数据是否为0即可
+        if (newIndexToOldIndexMap[i] === 0) {
+          patch(null, nextChild, container, parentComponent, anchor);
+        } else if (moved) {
+          if (j < 0 || j !== increasingNewIndexSequence[i]) {
+            // 需要移动
+            hostInsert(nextChild.el, container, anchor);
+          } else {
+            // 不需要移动则进行下一个对比
+            j--;
+          }
         }
       }
     }
@@ -358,4 +408,34 @@ export function createRenderer(options) {
   return {
     createApp: createAppAPI(render),
   };
+}
+
+// TODO 后续自己来写一些 这个是从网上找的
+
+function getSequence(nums) {
+  let n = nums.length;
+  if (n <= 1) {
+    return n;
+  }
+  let tail = [nums[0]]; //存放最长上升子序列数组
+  for (let i = 0; i < n; i++) {
+    if (nums[i] > tail[tail.length - 1]) {
+      //当nums中的元素比tail中的最后一个大时 可以放心push进tail
+      tail.push(nums[i]);
+    } else {
+      //否则进行二分查找
+      let left = 0;
+      let right = tail.length - 1;
+      while (left < right) {
+        let mid = (left + right) >> 1;
+        if (tail[mid] < nums[i]) {
+          left = mid + 1;
+        } else {
+          right = mid;
+        }
+      }
+      tail[left] = nums[i]; //将nums[i]放置到合适的位置，此时前面的元素都比nums[i]小
+    }
+  }
+  return tail;
 }
