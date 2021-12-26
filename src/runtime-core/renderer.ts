@@ -2,6 +2,7 @@ import { effect } from "../reactivity/effect";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createApp";
+import { shouldUpdateComponent } from "./componentUpdateUtils";
 import { Fragment, Text } from "./vnode";
 
 export function createRenderer(options) {
@@ -374,11 +375,30 @@ export function createRenderer(options) {
     parentComponent,
     anchor
   ) {
-    mountComponent(n2, container, parentComponent, anchor);
+    if (!n1) {
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      updateComponent(n1, n2);
+    }
+  }
+
+  function updateComponent(n1, n2) {
+    const instance = (n2.component = n1.component);
+    if (shouldUpdateComponent(n1, n2)) {
+      // next 存储新的vnode
+      instance.next = n2;
+      instance.update();
+    } else {
+      n2.el = n1.el;
+      instance.vnode = n2;
+    }
   }
 
   function mountComponent(vnode: any, container: any, parentComponent, anchor) {
-    const instance = createComponentInstance(vnode, parentComponent);
+    const instance = (vnode.component = createComponentInstance(
+      vnode,
+      parentComponent
+    ));
 
     setupComponent(instance);
 
@@ -386,7 +406,7 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance: any, container: any, anchor) {
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
         const subTree = instance.render.call(instance.proxy);
         patch(null, subTree, container, instance, anchor);
@@ -396,6 +416,13 @@ export function createRenderer(options) {
       } else {
         console.log("update");
 
+        const { next, vnode } = instance;
+
+        if (next) {
+          next.el = vnode.el;
+          updateComponentPreRender(instance, next);
+        }
+
         const prevTree = instance.subTree;
         const nextTree = instance.render.call(instance.proxy);
         instance.subTree = nextTree;
@@ -403,6 +430,13 @@ export function createRenderer(options) {
         patch(prevTree, nextTree, container, instance, anchor);
       }
     });
+  }
+
+  // 组件更新主要就是更新数据 -> props
+  function updateComponentPreRender(instance, next) {
+    instance.vnode = next;
+    instance.next = null;
+    instance.props = next.props;
   }
 
   return {

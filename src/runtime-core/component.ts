@@ -8,6 +8,7 @@ import { proxyRefs } from "..";
 export function createComponentInstance(vnode, parent) {
   const instance = {
     vnode,
+    next: null,
     type: vnode.type,
     setupState: {},
     props: undefined,

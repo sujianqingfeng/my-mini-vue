@@ -5,6 +5,7 @@ import UpdateProps from "./UpdateProps.js";
 import UpdateArrayToText from "./UpdateArrayToText.js";
 import UpdateTextToArray from "./UpdateTextToArray.js";
 import UpdateArrayToArray from "./UpdateArrayToArray.js";
+import UpdateComponent from "./UpdateComponent.js";
 
 export default {
   name: "app",
@@ -19,27 +20,28 @@ export default {
         },
       },
       [
-        h("p", {}, this.msg),
-        h("p", {}, "mini-vue"),
-        h(
-          Foo,
-          {
-            count: 1,
-            onFooFoo: (params) => {
-              console.log("foo", params);
-            },
-          },
-          {
-            header: ({ age }) => h("p", {}, "header" + age),
-            footer: () => h("p", {}, "footer"),
-          }
-        ),
-        h("p", {}, "点击我，count:", this.count),
-        h("p", {}, "下面是更新props"),
-        h(UpdateProps),
+        // h("p", {}, this.msg),
+        // h("p", {}, "mini-vue"),
+        // h(
+        //   Foo,
+        //   {
+        //     count: 1,
+        //     onFooFoo: (params) => {
+        //       console.log("foo", params);
+        //     },
+        //   },
+        //   {
+        //     header: ({ age }) => h("p", {}, "header" + age),
+        //     footer: () => h("p", {}, "footer"),
+        //   }
+        // ),
+        // h("p", {}, "点击我，count:", this.count),
+        // h("p", {}, "下面是更新props"),
+        // h(UpdateProps),
         // h(UpdateArrayToText),
         // h(UpdateTextToArray),
-        h(UpdateArrayToArray),
+        // h(UpdateArrayToArray),
+        h(UpdateComponent, { count: this.count }),
       ]
     );
   },
