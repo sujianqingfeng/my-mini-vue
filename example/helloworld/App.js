@@ -7,6 +7,7 @@ import UpdateTextToArray from "./UpdateTextToArray.js";
 import UpdateArrayToArray from "./UpdateArrayToArray.js";
 import UpdateComponent from "./UpdateComponent.js";
 
+
 export default {
   name: "app",
   render() {
@@ -20,8 +21,8 @@ export default {
         },
       },
       [
-        // h("p", {}, this.msg),
-        // h("p", {}, "mini-vue"),
+        h("p", {}, this.msg),
+        h("p", {}, "mini-vue "),
         // h(
         //   Foo,
         //   {
