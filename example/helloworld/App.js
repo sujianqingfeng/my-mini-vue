@@ -8,6 +8,7 @@ import UpdateArrayToArray from "./UpdateArrayToArray.js";
 import UpdateComponent from "./UpdateComponent.js";
 import NextTick from "./NextTick.js";
 
+
 export default {
   name: "app",
   render() {
@@ -21,8 +22,8 @@ export default {
         },
       },
       [
-        // h("p", {}, this.msg),
-        // h("p", {}, "mini-vue"),
+        h("p", {}, this.msg),
+        h("p", {}, "mini-vue "),
         // h(
         //   Foo,
         //   {
