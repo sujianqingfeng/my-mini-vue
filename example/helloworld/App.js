@@ -6,6 +6,7 @@ import UpdateArrayToText from "./UpdateArrayToText.js";
 import UpdateTextToArray from "./UpdateTextToArray.js";
 import UpdateArrayToArray from "./UpdateArrayToArray.js";
 import UpdateComponent from "./UpdateComponent.js";
+import NextTick from "./NextTick.js";
 
 export default {
   name: "app",
@@ -15,8 +16,8 @@ export default {
       {
         id: "div",
         onClick: () => {
-          console.log("click");
-          this.increment();
+          // console.log("click");
+          // this.increment();
         },
       },
       [
@@ -41,7 +42,8 @@ export default {
         // h(UpdateArrayToText),
         // h(UpdateTextToArray),
         // h(UpdateArrayToArray),
-        h(UpdateComponent, { count: this.count }),
+        // h(UpdateComponent, { count: this.count }),
+        h(NextTick),
       ]
     );
   },

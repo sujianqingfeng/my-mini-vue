@@ -4,6 +4,7 @@ import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createApp";
 import { shouldUpdateComponent } from "./componentUpdateUtils";
 import { Fragment, Text } from "./vnode";
+import { queueJobs } from "./scheduler";
 
 export function createRenderer(options) {
   const {
@@ -406,30 +407,37 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance: any, container: any, anchor) {
-    instance.update = effect(() => {
-      if (!instance.isMounted) {
-        const subTree = instance.render.call(instance.proxy);
-        patch(null, subTree, container, instance, anchor);
-        instance.vnode.el = subTree.el;
-        instance.subTree = subTree;
-        instance.isMounted = true;
-      } else {
-        console.log("update");
+    instance.update = effect(
+      () => {
+        if (!instance.isMounted) {
+          const subTree = instance.render.call(instance.proxy);
+          patch(null, subTree, container, instance, anchor);
+          instance.vnode.el = subTree.el;
+          instance.subTree = subTree;
+          instance.isMounted = true;
+        } else {
+          console.log("update");
 
-        const { next, vnode } = instance;
+          const { next, vnode } = instance;
 
-        if (next) {
-          next.el = vnode.el;
-          updateComponentPreRender(instance, next);
+          if (next) {
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+
+          const prevTree = instance.subTree;
+          const nextTree = instance.render.call(instance.proxy);
+          instance.subTree = nextTree;
+
+          patch(prevTree, nextTree, container, instance, anchor);
         }
-
-        const prevTree = instance.subTree;
-        const nextTree = instance.render.call(instance.proxy);
-        instance.subTree = nextTree;
-
-        patch(prevTree, nextTree, container, instance, anchor);
+      },
+      {
+        scheduler() {
+          queueJobs(instance.update);
+        },
       }
-    });
+    );
   }
 
   // 组件更新主要就是更新数据 -> props
