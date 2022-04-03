@@ -7,7 +7,7 @@ const enum TagType {
 
 export function baseParse(content: string) {
   const context = createParseContext(content);
-  return createRoot(parseChildren(context));
+  return createRoot(parseChildren(context, ""));
 }
 
 /**
@@ -28,26 +28,41 @@ function createParseContext(content) {
  * @param context
  * @returns
  */
-function parseChildren(context) {
+function parseChildren(context, parentTag) {
   const nodes: any = [];
 
-  let node;
-  const s = context.source;
-  if (s.startsWith("{{")) {
-    node = parseInterpolation(context);
-  } else if (s[0] === "<") {
-    if (/[a-z]/i.test(s[1])) {
-      node = parseElement(context);
+  while (!isEnd(context, parentTag)) {
+    let node;
+    const s = context.source;
+    if (s.startsWith("{{")) {
+      node = parseInterpolation(context);
+    } else if (s[0] === "<") {
+      if (/[a-z]/i.test(s[1])) {
+        node = parseElement(context);
+      }
     }
+
+    if (!node) {
+      node = parseText(context);
+    }
+
+    nodes.push(node);
   }
-
-  if (!node) {
-    node = parseText(context);
-  }
-
-  nodes.push(node);
-
   return nodes;
+}
+
+/**
+ * children 解析完成标志
+ *
+ * @param context
+ * @returns
+ */
+function isEnd(context, parentTag) {
+  const s = context.source;
+  if (s && s.startsWith(`</${parentTag}>`)) {
+    return true;
+  }
+  return !s;
 }
 
 /**
@@ -56,7 +71,16 @@ function parseChildren(context) {
  * @returns
  */
 function parseText(context: any) {
-  const content = parseTextData(context, context.source.length);
+  let endIndex = context.source.length;
+  const endToken = "{{";
+
+  const index = context.source.indexOf(endToken);
+
+  if (index != -1) {
+    endIndex = index;
+  }
+
+  const content = parseTextData(context, endIndex);
 
   return {
     type: NodeTypes.TEXT,
@@ -84,8 +108,11 @@ function parseTextData(context: any, length) {
  * @returns
  */
 function parseElement(context: any) {
-  const element = parseTag(context, TagType.Start);
+  const element: any = parseTag(context, TagType.Start);
+  // 注意顺序是在endTag之前
+  element.children = parseChildren(context, element.tag);
   parseTag(context, TagType.End);
+
   return element;
 }
 
