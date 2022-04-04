@@ -1,3 +1,4 @@
+import { isString } from "../../shared";
 import { NodeTypes } from "./ast";
 import {
   CREATE_ELEMENT_VNODE,
@@ -33,6 +34,12 @@ export function generate(ast) {
   };
 }
 
+/**
+ * 添加导入方法的代码
+ *
+ * @param ast
+ * @param context
+ */
 function genFunctionPreamble(ast, context) {
   // 生成类似 const { toDisplayString: _toDisplayString } = Vue
   const { push } = context;
@@ -71,15 +78,78 @@ function genNode(node, context) {
       genElement(node, context);
       break;
 
+    case NodeTypes.COMPOUND_EXPRESSION:
+      genCompoundExpression(node, context);
+      break;
+
     default:
       break;
   }
 }
 
+/**
+ * 生成复合类型的代码
+ *
+ *
+ * @param node
+ * @param context
+ */
+function genCompoundExpression(node, context) {
+  const { children } = node;
+  const { push } = context;
+
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+
+    if (isString(child)) {
+      push(child);
+    } else {
+      genNode(child, context);
+    }
+  }
+}
+
 function genElement(node, context) {
   const { push, helper } = context;
-  const { tag } = node;
-  push(`${helper(CREATE_ELEMENT_VNODE)}(${tag})`);
+  const { tag, children, props } = node;
+  push(`${helper(CREATE_ELEMENT_VNODE)}(`);
+
+  const nullableNodes = genNullable([tag, props, children]);
+  genNodeList(nullableNodes, context);
+
+  push(")");
+}
+
+/**
+ * 处理多个节点
+ *
+ * @param nodes
+ * @param context
+ */
+function genNodeList(nodes, context) {
+  const { push } = context;
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (isString(node)) {
+      push(node);
+    } else {
+      genNode(node, context);
+    }
+
+    if (i < nodes.length - 1) {
+      push(",");
+    }
+  }
+}
+
+/**
+ * 处理虚值
+ *
+ * @param args
+ * @returns
+ */
+function genNullable(args) {
+  return args.map((arg) => arg || "null");
 }
 
 /**
