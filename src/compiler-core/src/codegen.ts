@@ -1,5 +1,9 @@
 import { NodeTypes } from "./ast";
-import { helperMapName, TO_DISPLAY_STRING } from "./runtimeHelpers";
+import {
+  CREATE_ELEMENT_BLOCK,
+  helperMapName,
+  TO_DISPLAY_STRING,
+} from "./runtimeHelpers";
 
 /**
  * 生成代码
@@ -63,9 +67,19 @@ function genNode(node, context) {
       genExpression(node, context);
       break;
 
+    case NodeTypes.ELEMENT:
+      genElement(node, context);
+      break;
+
     default:
       break;
   }
+}
+
+function genElement(node, context) {
+  const { push, helper } = context;
+  const { tag } = node;
+  push(`${helper(CREATE_ELEMENT_BLOCK)}(${tag})`);
 }
 
 /**
