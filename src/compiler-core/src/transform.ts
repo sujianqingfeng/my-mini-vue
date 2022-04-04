@@ -29,8 +29,6 @@ function traverseNode(node: any, context) {
  * @param context
  */
 function traverseChildren(node: any, context: any) {
-  console.log(1111, node);
-
   const children = node.children;
   if (children) {
     for (let i = 0; i < children.length; i++) {
@@ -42,13 +40,13 @@ function traverseChildren(node: any, context: any) {
 /**
  * 创建transform context
  *
- * @param node
+ * @param root
  * @param options
  * @returns
  */
-function createTransformContext(node, options) {
+function createTransformContext(root, options) {
   const context = {
-    node,
+    root,
     nodeTransforms: options.nodeTransforms || [],
   };
 
