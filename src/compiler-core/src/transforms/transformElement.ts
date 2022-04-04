@@ -6,7 +6,7 @@ export function transformElement(node, context) {
     return () => {
       const { children, tag } = node;
 
-      const vnodeTag = `${tag}`;
+      const vnodeTag = `"${tag}"`;
       const vnodeProps = undefined;
       const vnodeChildren = children[0];
 
