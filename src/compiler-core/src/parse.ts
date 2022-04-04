@@ -7,7 +7,7 @@ const enum TagType {
 
 export function baseParse(content: string) {
   const context = createParseContext(content);
-  return createRoot(parseChildren(context, ""));
+  return createRoot(parseChildren(context, []));
 }
 
 /**
@@ -28,17 +28,17 @@ function createParseContext(content) {
  * @param context
  * @returns
  */
-function parseChildren(context, parentTag) {
+function parseChildren(context, ancestors) {
   const nodes: any = [];
 
-  while (!isEnd(context, parentTag)) {
+  while (!isEnd(context, ancestors)) {
     let node;
     const s = context.source;
     if (s.startsWith("{{")) {
       node = parseInterpolation(context);
     } else if (s[0] === "<") {
       if (/[a-z]/i.test(s[1])) {
-        node = parseElement(context);
+        node = parseElement(context, ancestors);
       }
     }
 
@@ -57,11 +57,18 @@ function parseChildren(context, parentTag) {
  * @param context
  * @returns
  */
-function isEnd(context, parentTag) {
+function isEnd(context, ancestors) {
   const s = context.source;
-  if (s && s.startsWith(`</${parentTag}>`)) {
-    return true;
+
+  if (s.startsWith("</")) {
+    for (let i = 0; i < ancestors.length; i++) {
+      const tag = ancestors[i].tag;
+      if (startsWithEndTagOpen(s, tag)) {
+        return true;
+      }
+    }
   }
+
   return !s;
 }
 
@@ -72,12 +79,14 @@ function isEnd(context, parentTag) {
  */
 function parseText(context: any) {
   let endIndex = context.source.length;
-  const endToken = "{{";
+  const endTokens = ["{{", "<"];
 
-  const index = context.source.indexOf(endToken);
+  for (let i = 0; i < endTokens.length; i++) {
+    const index = context.source.indexOf(endTokens[i]);
 
-  if (index != -1) {
-    endIndex = index;
+    if (index != -1 && index < endIndex) {
+      endIndex = index;
+    }
   }
 
   const content = parseTextData(context, endIndex);
@@ -107,11 +116,18 @@ function parseTextData(context: any, length) {
  * @param context
  * @returns
  */
-function parseElement(context: any) {
+function parseElement(context: any, ancestors) {
   const element: any = parseTag(context, TagType.Start);
+  ancestors.push(element);
   // 注意顺序是在endTag之前
-  element.children = parseChildren(context, element.tag);
-  parseTag(context, TagType.End);
+  element.children = parseChildren(context, ancestors);
+  ancestors.pop();
+
+  if (startsWithEndTagOpen(context.source, element.tag)) {
+    parseTag(context, TagType.End);
+  } else {
+    throw new Error(`unclosed tag ${element.tag}`);
+  }
 
   return element;
 }
@@ -191,4 +207,17 @@ function advanceBy(context, length) {
  */
 function createRoot(children) {
   return { children };
+}
+
+/**
+ * 判断文本开头是否是传入的tag
+ *
+ * @param source
+ * @param tag
+ */
+function startsWithEndTagOpen(source, tag) {
+  return (
+    source.startsWith("</") &&
+    source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
+  );
 }

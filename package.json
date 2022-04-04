@@ -5,7 +5,7 @@
   "module": "/lib/mini-vue.esm.js",
   "license": "MIT",
   "scripts": {
-    "jest": "jest",
+    "test": "jest",
     "build": "npx rollup -c rollup.config.js",
     "watch": "npx rollup -c rollup.config.js --watch"
   },
