@@ -1,7 +1,18 @@
-export function transform(root, options) {
+export function transform(root, options = {}) {
   const context = createTransformContext(root, options);
 
   traverseNode(root, context);
+
+  createRootCodegen(root);
+}
+
+/**
+ * 创建生成code的根节点
+ *
+ * @param root
+ */
+function createRootCodegen(root: any) {
+  root.codegenNode = root.children[0];
 }
 
 /**
