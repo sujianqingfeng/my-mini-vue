@@ -1,51 +1,52 @@
-import { extend } from "../shared";
+import { extend } from "../shared"
+import { Dep } from "./dep"
+
+type KeyToDepMap = Map<any, Dep>
 
 // 全局变量 用来存放 当前effect
-let activeEffect;
+let activeEffect: ReactiveEffect | undefined
 // 是否应该被收集
-let shouldTrack;
+let shouldTrack = true
 // 存放依赖的map
-const targetMap = new Map();
+const targetMap = new WeakMap<any, KeyToDepMap>()
 
 /**
  * 存储副作用函数
  */
-export class ReactiveEffect {
-  private _fn: Function;
-  deps = [];
-  active = true;
-  onStop?: () => void;
-  public scheduler: Function | undefined;
+export class ReactiveEffect<T = any> {
+  deps: Dep[] = []
+  active = true
+  onStop?: () => void
 
-  constructor(fn: Function, scheduler?: Function) {
-    this._fn = fn;
-    this.scheduler = scheduler;
-  }
+  constructor(
+    public fn: () => T,
+    public scheduler: EffectScheduler | null = null
+  ) {}
 
   run() {
     // stop 下的状态 不用收集依赖
     if (!this.active) {
-      return this._fn();
+      return this.fn()
     }
     // 保存当前执行的fn
-    activeEffect = this;
+    activeEffect = this
     // 设置需要收集标识
-    shouldTrack = true;
+    shouldTrack = true
     // 执行fn的时候 就会访问响应式数据中的get 从而触发依赖收集
-    const result = this._fn();
+    const result = this.fn()
     // 重置需要收集标识  以防收集到不需要收集的依赖
-    shouldTrack = false;
-    return result;
+    shouldTrack = false
+    return result
   }
 
   stop() {
     // 如果没有停止过
     if (this.active) {
-      clearUpEffect(this);
+      clearUpEffect(this)
       // 存在onStop回调就执行
-      this.onStop && this.onStop();
+      this.onStop && this.onStop()
       // 设置停止标识
-      this.active = false;
+      this.active = false
     }
   }
 }
@@ -58,20 +59,20 @@ export class ReactiveEffect {
  * @param options
  * @returns
  */
-export function effect(fn: Function, options: any = {}) {
-  const _effect = new ReactiveEffect(fn);
+export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
+  const _effect = new ReactiveEffect(fn)
 
   // 把一些可选项挂到 effect实例上 比如scheduler、onStop
-  extend(_effect, options);
+  extend(_effect, options)
   // 执行fn
-  _effect.run();
+  _effect.run()
 
   // effect函数要返回可对fn执行的函数 并不是fn本身
-  const runner: any = _effect.run.bind(_effect);
+  const runner: any = _effect.run.bind(_effect)
   // 挂在到runner上面 stop调用的时候需要用到
-  runner.effect = _effect;
+  runner.effect = _effect
 
-  return runner;
+  return runner
 }
 
 /**
@@ -81,27 +82,26 @@ export function effect(fn: Function, options: any = {}) {
  * @param key
  * @returns
  */
-export function track(target: object, key: string) {
+export function track(target: object, key: unknown) {
   // 不需要收集直接返回
-  if (!isTracking()) return;
+  if (!isTracking()) return
 
   // 取出存放依赖的容器dep
-  let depsMap = targetMap.get(target);
+  let depsMap = targetMap.get(target)
 
   if (!depsMap) {
-    depsMap = new Map();
-    targetMap.set(target, depsMap);
+    targetMap.set(target, (depsMap = new Map()))
   }
 
-  let dep = depsMap.get(key);
+  let dep = depsMap.get(key)
 
   if (!dep) {
-    dep = new Set();
-    depsMap.set(key, dep);
+    dep = new Set()
+    depsMap.set(key, dep)
   }
 
   // 开始收集
-  trackEffects(dep);
+  trackEffects(dep)
 }
 
 /**
@@ -110,13 +110,13 @@ export function track(target: object, key: string) {
  * @param dep
  * @returns
  */
-export function trackEffects(dep: Set<ReactiveEffect>) {
+export function trackEffects(dep: Dep) {
   // 处理重复依赖
-  if (dep.has(activeEffect)) return;
+  if (dep.has(activeEffect!)) return
 
-  dep.add(activeEffect);
+  dep.add(activeEffect!)
   // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
-  activeEffect.deps.push(dep);
+  activeEffect!.deps.push(dep)
 }
 
 /**
@@ -125,12 +125,20 @@ export function trackEffects(dep: Set<ReactiveEffect>) {
  * @param target
  * @param key
  */
-export function trigger(target: object, key: string) {
+export function trigger(target: object, key: unknown) {
   // 取出对应的依赖
-  const depsMap = targetMap.get(target);
-  const dep = depsMap.get(key);
-  // 执行依赖
-  triggerEffects(dep);
+  const depsMap = targetMap.get(target)
+
+  if (!depsMap) {
+    return
+  }
+
+  const dep = depsMap.get(key)
+
+  if (dep) {
+    // 执行依赖
+    triggerEffects(dep)
+  }
 }
 
 /**
@@ -138,13 +146,13 @@ export function trigger(target: object, key: string) {
  *
  * @param dep
  */
-export function triggerEffects(dep: Set<ReactiveEffect>) {
+export function triggerEffects(dep: Dep) {
   // 如果依赖被设置过scheduler就执行scheduler
   for (const effect of dep) {
     if (effect.scheduler) {
-      effect.scheduler();
+      effect.scheduler()
     } else {
-      effect.run();
+      effect.run()
     }
   }
 }
@@ -157,24 +165,31 @@ export function triggerEffects(dep: Set<ReactiveEffect>) {
 function clearUpEffect(effect: ReactiveEffect) {
   effect.deps.forEach((dep) => {
     // dep 是一个set
-    dep.delete(effect);
-  });
+    dep.delete(effect)
+  })
 }
 
 /**
- * 取消响应是数据
+ * 取消响应式数据
  *
  * @param runner
  */
 export function stop(runner: any) {
-  runner.effect.stop();
+  runner.effect.stop()
 }
 
 /**
- *   // 需要收集  同时 通过effect函数触发依赖
+ * 需要收集 同时 通过effect函数触发依赖
  *
  * @returns
  */
 export function isTracking() {
-  return shouldTrack && activeEffect !== undefined;
+  return shouldTrack && activeEffect !== undefined
+}
+
+export type EffectScheduler = (...args: any[]) => any
+export interface ReactiveEffectOptions {
+  lazy?: boolean
+  scheduler?: EffectScheduler
+  onStop?: () => void
 }

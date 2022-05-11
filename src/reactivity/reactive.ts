@@ -2,7 +2,7 @@ import {
   mutableHandles,
   readonlyHandles,
   shallowReadonlyHandles,
-} from "./baseHandles";
+} from "./baseHandles"
 
 export enum ReactiveFlags {
   /**
@@ -23,7 +23,7 @@ export enum ReactiveFlags {
  * @returns
  */
 export function reactive(raw: object) {
-  return createReactiveObject(raw, mutableHandles);
+  return createReactiveObject(raw, mutableHandles)
 }
 
 /**
@@ -33,7 +33,7 @@ export function reactive(raw: object) {
  * @returns
  */
 export function readonly(raw: object) {
-  return createReactiveObject(raw, readonlyHandles);
+  return createReactiveObject(raw, readonlyHandles)
 }
 
 /**
@@ -44,7 +44,7 @@ export function readonly(raw: object) {
  * @returns
  */
 export function shallowReadonly(raw: object) {
-  return createReactiveObject(raw, shallowReadonlyHandles);
+  return createReactiveObject(raw, shallowReadonlyHandles)
 }
 
 /**
@@ -54,8 +54,8 @@ export function shallowReadonly(raw: object) {
  * @param baseHandle
  * @returns
  */
-function createReactiveObject(raw: any, baseHandle: ProxyHandler<any>) {
-  return new Proxy(raw, baseHandle);
+function createReactiveObject(raw: object, baseHandle: ProxyHandler<any>) {
+  return new Proxy(raw, baseHandle)
 }
 
 /**
@@ -65,7 +65,7 @@ function createReactiveObject(raw: any, baseHandle: ProxyHandler<any>) {
  * @returns
  */
 export function isReactive(value: any) {
-  return !!value[ReactiveFlags.IS_REACTIVE];
+  return !!value[ReactiveFlags.IS_REACTIVE]
 }
 
 /**
@@ -75,7 +75,7 @@ export function isReactive(value: any) {
  * @returns
  */
 export function isReadonly(value: any) {
-  return !!value[ReactiveFlags.IS_READONLY];
+  return !!value[ReactiveFlags.IS_READONLY]
 }
 
 /**
@@ -84,6 +84,6 @@ export function isReadonly(value: any) {
  * @param value
  * @returns
  */
-export function isProxy(value) {
-  return isReactive(value) || isReadonly(value);
+export function isProxy(value: any) {
+  return isReactive(value) || isReadonly(value)
 }

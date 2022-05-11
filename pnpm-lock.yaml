@@ -1,4 +1,4 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@babel/core': ^7.15.5
@@ -16,7 +16,7 @@ devDependencies:
   '@babel/core': registry.npmmirror.com/@babel/core/7.17.8
   '@babel/preset-env': registry.npmmirror.com/@babel/preset-env/7.16.11_@babel+core@7.17.8
   '@babel/preset-typescript': registry.npmmirror.com/@babel/preset-typescript/7.16.7_@babel+core@7.17.8
-  '@rollup/plugin-typescript': registry.npmmirror.com/@rollup/plugin-typescript/8.3.1_8fb0118e9d69f3600cbb8f144f7d456c
+  '@rollup/plugin-typescript': registry.npmmirror.com/@rollup/plugin-typescript/8.3.1_r6ybddu5nhzwadf3r4ke67kfnq
   '@types/jest': registry.npmmirror.com/@types/jest/27.4.1
   babel-jest: registry.npmmirror.com/babel-jest/27.5.1_@babel+core@7.17.8
   jest: registry.npmmirror.com/jest/27.5.1
@@ -1761,7 +1761,7 @@ packages:
       '@jridgewell/sourcemap-codec': registry.npmmirror.com/@jridgewell/sourcemap-codec/1.4.11
     dev: true
 
-  registry.npmmirror.com/@rollup/plugin-typescript/8.3.1_8fb0118e9d69f3600cbb8f144f7d456c:
+  registry.npmmirror.com/@rollup/plugin-typescript/8.3.1_r6ybddu5nhzwadf3r4ke67kfnq:
     resolution: {integrity: sha512-84rExe3ICUBXzqNX48WZV2Jp3OddjTMX97O2Py6D1KJaGSwWp0mDHXj+bCGNJqWHIEKDIT2U0sDjhP4czKi6cA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rollup/plugin-typescript/-/plugin-typescript-8.3.1.tgz}
     id: registry.npmmirror.com/@rollup/plugin-typescript/8.3.1
     name: '@rollup/plugin-typescript'
