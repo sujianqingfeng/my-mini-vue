@@ -1,1 +1,46 @@
-<mxfile host="app.diagrams.net" modified="2022-05-19T15:21:56.920Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.47" etag="pR67ZQxtrg4pNpaihkaL" version="17.4.6" type="github"><diagram id="0q8ObWF2c9_AeSXeWdKU" name="Page-1">7Vhdc5swEPw1PKbDd5zH2o7T6SSdaei07qMKF1AjEBHCxvn1lUAYCNgl7cQ0mT6hW51At8ueGDRrERdXDKXRDQ2AaKYeFJq11EzTMC8McZHIrkJcw6qAkOFAJTWAhx9BgbpCcxxA1knklBKO0y7o0yQBn3cwxBjddtPuKOk+NUUh9ADPR6SPfsMBjyp0Zp43+AfAYVQ/2XAvqpkY1cmqkixCAd22IOtSsxaMUl6N4mIBRJJX81KtWx2Y3W+MQcLHLEi/eJ8W84+39iPz7tfe+rrw7TNX7Y3v6oIhEPWrkDIe0ZAmiFw26JzRPAlA3lUXUXYP3JeVGiJoFlxTmirwJ3C+U8qinFMBRTwmalbsnu3W6mZl8F0G75w6XBbtyeVORXc04SsUYyKBBY2xL+rwUJKJy42nEtRTJdnzqlJZ3kECFZTRnPkq63buhg9XKTgonnvZKpt9fsBnpnoREQuBH2HX2Mss/AE0BlGAWMeAII433X0g9aKG+7xGSzFQcj5D2tpo/7V9EW3tE2l7bJMbRHL1pI0YPJW7K+Y2why8FJXVb0W37mr1W847L8OwAAN8b4BxKFpQn7J6VleNUp0U5kw1p23Td426mUatnuvoL+Sg88kNdCIjHG5eI4zgTNnk+kbQbL30wooB8ssNTG6LngcGBDloi5nZtYUx03u22H8ttW3hvpQtrMOc+zROMQF25lP22ol3nhBvDRFvnZJ4w568If3jJ/rhk3pEI7OmbGT2CFMFNH7lnjLHeMo+padm01uqwHzdGrcMJaLGTzKo7fQabeiMtKE5pQ2dI98TecJxDG/xaBv8pjjt0TaG97fW/QZpP2n3M/rv+9ccxEGoB5CCoDbx5f5D+W+vR74ggncZZpDhR/SjTJCCyGaXVRzKaURwmIixL/gCJgDJJvYRea8mYhwEZYdNKU54Wawz15yllAMTsqCEimXLhCYyKeOM3sMT8Ehv/sPm91eS225X8iHF3QHFrecrLq2y/5lYzrV+yVqXvwA=</diagram></mxfile>
+<mxfile host="65bd71144e">
+    <diagram id="0q8ObWF2c9_AeSXeWdKU" name="Page-1">
+        <mxGraphModel dx="1759" dy="883" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Comic Sans MS;fontSize=22;" parent="1" source="RB6gqGpe5amBSsFs8Qqi-2" target="pTSNCBJR4zrSkXSXLxc4-1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Comic Sans MS;fontSize=22;" parent="1" source="RB6gqGpe5amBSsFs8Qqi-2" target="pTSNCBJR4zrSkXSXLxc4-4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="RB6gqGpe5amBSsFs8Qqi-2" value="vue" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=25;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="286" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Comic Sans MS;fontSize=22;" parent="1" source="pTSNCBJR4zrSkXSXLxc4-1" target="pTSNCBJR4zrSkXSXLxc4-5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-2" value="@vue/reactive" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=22;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="180" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-3" value="@vue/compiler-core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=22;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="380" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Comic Sans MS;fontSize=22;" parent="1" source="pTSNCBJR4zrSkXSXLxc4-4" target="pTSNCBJR4zrSkXSXLxc4-3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-4" value="@vue/compiler-dom" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=22;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="380" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;sketch=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Comic Sans MS;fontSize=22;" parent="1" source="pTSNCBJR4zrSkXSXLxc4-5" target="pTSNCBJR4zrSkXSXLxc4-2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-5" value="@vue/runtime-core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=22;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="180" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-1" value="@vue/runtime-dom" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Indie Flower;sketch=1;fontSize=22;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="180" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pTSNCBJR4zrSkXSXLxc4-15" value="Vue3 dependency graph" style="text;html=1;resizable=0;autosize=1;align=center;verticalAlign=middle;points=[];fillColor=none;strokeColor=none;rounded=0;sketch=1;fontFamily=Indie Flower;fontSize=26;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DIndie%2BFlower;" parent="1" vertex="1">
+                    <mxGeometry x="455" y="75" width="270" height="40" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
