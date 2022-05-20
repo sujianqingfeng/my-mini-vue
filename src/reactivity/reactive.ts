@@ -1,3 +1,4 @@
+import { isObject } from "../shared"
 import {
   mutableHandles,
   readonlyHandles,
@@ -86,4 +87,14 @@ export function isReadonly(value: any) {
  */
 export function isProxy(value: any) {
   return isReactive(value) || isReadonly(value)
+}
+
+/**
+ * 根据值得类型转化为响应式的值或者原始值
+ *
+ * @param value
+ * @returns
+ */
+export function toReactive<T extends unknown>(value: T): T {
+  return isObject(value) ? reactive(value) : value
 }

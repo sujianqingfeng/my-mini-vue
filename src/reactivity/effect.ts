@@ -1,12 +1,12 @@
 import { extend } from "../shared"
-import { Dep } from "./dep"
+import { createDep, Dep } from "./dep"
 
 type KeyToDepMap = Map<any, Dep>
 
 // 全局变量 用来存放 当前effect
-let activeEffect: ReactiveEffect | undefined
+export let activeEffect: ReactiveEffect | undefined
 // 是否应该被收集
-let shouldTrack = true
+export let shouldTrack = true
 // 存放依赖的map
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
@@ -83,25 +83,25 @@ export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
  * @returns
  */
 export function track(target: object, key: unknown) {
-  // 不需要收集直接返回
-  if (!isTracking()) return
+  // 判断需要收集
 
-  // 取出存放依赖的容器dep
-  let depsMap = targetMap.get(target)
+  if (shouldTrack && activeEffect) {
+    // 取出存放依赖的容器dep
+    let depsMap = targetMap.get(target)
 
-  if (!depsMap) {
-    targetMap.set(target, (depsMap = new Map()))
+    if (!depsMap) {
+      targetMap.set(target, (depsMap = new Map()))
+    }
+
+    let dep = depsMap.get(key)
+
+    if (!dep) {
+      depsMap.set(key, (dep = createDep()))
+    }
+
+    // 开始收集
+    trackEffects(dep)
   }
-
-  let dep = depsMap.get(key)
-
-  if (!dep) {
-    dep = new Set()
-    depsMap.set(key, dep)
-  }
-
-  // 开始收集
-  trackEffects(dep)
 }
 
 /**
@@ -178,14 +178,14 @@ export function stop(runner: any) {
   runner.effect.stop()
 }
 
-/**
- * 需要收集 同时 通过effect函数触发依赖
- *
- * @returns
- */
-export function isTracking() {
-  return shouldTrack && activeEffect !== undefined
-}
+// /**
+//  * 需要收集 同时 通过effect函数触发依赖
+//  *
+//  * @returns
+//  */
+// export function isTracking() {
+//   return shouldTrack && activeEffect !== undefined
+// }
 
 export type EffectScheduler = (...args: any[]) => any
 export interface ReactiveEffectOptions {

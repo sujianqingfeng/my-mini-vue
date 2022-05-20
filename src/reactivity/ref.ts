@@ -1,52 +1,57 @@
-import { hasChanged, isObject } from "../shared";
-import { isTracking, trackEffects, triggerEffects } from "./effect";
-import { reactive } from "./reactive";
+import { hasChanged, isObject } from "../shared"
+import { createDep, Dep } from "./dep"
+import {
+  activeEffect,
+  shouldTrack,
+  trackEffects,
+  triggerEffects,
+} from "./effect"
+import { reactive, toReactive } from "./reactive"
+
+declare const RefSymbol: unique symbol
+
+export interface Ref<T = any> {
+  value: T
+  [RefSymbol]: true
+}
 
 // Ref 实现
-class RefImpl {
+class RefImpl<T> {
   /**
    * 处理之后的值
    */
-  private _value: any;
+  private _value: T
   /**
    * 原始值
    */
-  private _rawValue: any;
+  private _rawValue: T
   /**
    * 依赖容器
    */
-  public dep;
+  public dep?: Dep = undefined
   // ref 标识
-  public readonly __v_isRef = true;
+  public readonly __v_isRef = true
   constructor(value) {
-    this._value = convert(value);
-    this._rawValue = value;
-    this.dep = new Set();
+    this._rawValue = value
+    this._value = toReactive(value)
+    this.dep = new Set()
   }
 
   get value() {
-    trackRefValue(this);
-    return this._value;
+    trackRefValue(this)
+    return this._value
   }
 
   set value(val) {
     // 有变化就赋值
     if (hasChanged(this._rawValue, val)) {
-      this._value = convert(val);
-      this._rawValue = val;
+      this._rawValue = val
+      this._value = toReactive(val)
 
-      triggerEffects(this.dep);
+      if (this.dep) {
+        triggerEffects(this.dep)
+      }
     }
-  }
-
-  /**
-   * 判断是否需要收集
-   * 如果value是一个对象 就交给了reactive处理 就不需要本身的dep来进行依赖收集了
-   *
-   * @returns
-   */
-  shouldTrack() {
-    return !isObject(this._rawValue);
   }
 }
 
@@ -56,8 +61,8 @@ class RefImpl {
  * @param value
  * @returns
  */
-export function ref(value: any) {
-  return new RefImpl(value);
+export function ref(value?: unknown) {
+  return new RefImpl(value)
 }
 
 /**
@@ -70,32 +75,32 @@ export function ref(value: any) {
 export function proxyRefs(raw) {
   return new Proxy(raw, {
     get(target, key) {
-      const res = Reflect.get(target, key);
+      const res = Reflect.get(target, key)
       // 解构出原值
-      return unRef(res);
+      return unRef(res)
     },
 
     set(target, key, newValue) {
-      const res = Reflect.get(target, key);
+      const res = Reflect.get(target, key)
 
       // 本身是一个ref但是设置的值不是ref类型
       if (isRef(res) && !isRef(newValue)) {
-        return (res.value = newValue);
+        return (res.value = newValue)
       } else {
-        return Reflect.set(target, key, newValue);
+        return Reflect.set(target, key, newValue)
       }
     },
-  });
+  })
 }
 
 /**
  * 判断是否是一个ref类型
  *
- * @param ref
+ * @param r
  * @returns
  */
-export function isRef(ref) {
-  return ref && !!ref.__v_isRef;
+export function isRef(r: any): r is Ref {
+  return !!(r && r.__v_isRef === true)
 }
 
 /**
@@ -104,18 +109,13 @@ export function isRef(ref) {
  * @param ref
  * @returns
  */
-export function unRef(ref) {
-  return isRef(ref) ? ref.value : ref;
+export function unRef<T>(ref: T | Ref<T>): T {
+  return isRef(ref) ? ref.value : ref
 }
 
-/**
- * 根据值得类型转化为响应式的值或者原始值
- *
- * @param value
- * @returns
- */
-function convert(value) {
-  return isObject(value) ? reactive(value) : value;
+type RefBase<T> = {
+  dep?: Dep
+  value: T
 }
 
 /**
@@ -123,8 +123,8 @@ function convert(value) {
  *
  * @param ref
  */
-function trackRefValue(ref) {
-  if (isTracking() && ref.shouldTrack()) {
-    trackEffects(ref.dep);
+function trackRefValue(ref: RefBase<any>) {
+  if (shouldTrack && activeEffect) {
+    trackEffects(ref.dep || (ref.dep = createDep()))
   }
 }
