@@ -1,6 +1,6 @@
 import { isObject, extend } from "../shared"
 import { track, trigger } from "./effect"
-import { reactive, ReactiveFlags, readonly } from "./reactive"
+import { reactive, ReactiveFlags, readonly, Target } from "./reactive"
 
 // 全局变量  只执行一次
 const get = createGetter()
@@ -16,7 +16,7 @@ const shallowReadonlyGet = createGetter(true, true)
  * @returns
  */
 function createGetter(isReadonly = false, shallow = false) {
-  return function get(target: object, key: PropertyKey, receiver?: any) {
+  return function get(target: Target, key: string | symbol, receiver: object) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
     } else if (key === ReactiveFlags.IS_READONLY) {
@@ -48,8 +48,13 @@ function createGetter(isReadonly = false, shallow = false) {
  * @returns
  */
 function createSetter() {
-  return function set(targe: object, key: string, value: any) {
-    const res = Reflect.set(targe, key, value)
+  return function set(
+    targe: object,
+    key: string | symbol,
+    value: unknown,
+    receiver: object
+  ) {
+    const res = Reflect.set(targe, key, value, receiver)
 
     trigger(targe, key)
     return res
@@ -66,11 +71,13 @@ export const mutableHandles = {
 /**
  * 可读取的proxy handles
  */
-export const readonlyHandles = {
+export const readonlyHandles: ProxyHandler<object> = {
   get: readonlyGet,
   set: function (target, key, value) {
     console.warn(
-      `readonly not call set ,target:${target},key:${key},value:${value}`
+      `readonly not call set ,target:${target},key:${String(
+        key
+      )},value:${value}`
     )
     // JavaScript 强制执行某些不变量 — 内部方法和捕捉器必须满足的条件。
     // set 方法必须返回 true 或者 false

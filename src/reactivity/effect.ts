@@ -112,11 +112,13 @@ export function track(target: object, key: unknown) {
  */
 export function trackEffects(dep: Dep) {
   // 处理重复依赖
-  if (dep.has(activeEffect!)) return
+  shouldTrack = !dep.has(activeEffect!)
 
-  dep.add(activeEffect!)
-  // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
-  activeEffect!.deps.push(dep)
+  if (shouldTrack) {
+    dep.add(activeEffect!)
+    // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
+    activeEffect!.deps.push(dep)
+  }
 }
 
 /**

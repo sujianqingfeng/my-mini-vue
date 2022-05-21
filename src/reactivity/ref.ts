@@ -6,7 +6,7 @@ import {
   trackEffects,
   triggerEffects,
 } from "./effect"
-import { reactive, toReactive } from "./reactive"
+import { toReactive } from "./reactive"
 
 declare const RefSymbol: unique symbol
 
@@ -65,32 +65,36 @@ export function ref(value?: unknown) {
   return new RefImpl(value)
 }
 
+// 自动解构ref
+const shallowUnwrapHandlers: ProxyHandler<any> = {
+  get(target, key) {
+    const res = Reflect.get(target, key)
+    // 解构出原值
+    return unRef(res)
+  },
+
+  set(target, key, newValue) {
+    const oldValue = Reflect.get(target, key)
+
+    // 本身是一个ref但是设置的值不是ref类型
+    if (isRef(oldValue) && !isRef(newValue)) {
+      oldValue.value = newValue
+      return true
+    } else {
+      return Reflect.set(target, key, newValue)
+    }
+  },
+}
+
 /**
  *
  * 针对对象中存在ref的处理
  *
- * @param raw
+ * @param objectWithRefs
  * @returns
  */
-export function proxyRefs(raw) {
-  return new Proxy(raw, {
-    get(target, key) {
-      const res = Reflect.get(target, key)
-      // 解构出原值
-      return unRef(res)
-    },
-
-    set(target, key, newValue) {
-      const res = Reflect.get(target, key)
-
-      // 本身是一个ref但是设置的值不是ref类型
-      if (isRef(res) && !isRef(newValue)) {
-        return (res.value = newValue)
-      } else {
-        return Reflect.set(target, key, newValue)
-      }
-    },
-  })
+export function proxyRefs<T extends object>(objectWithRefs: T) {
+  return new Proxy(objectWithRefs, shallowUnwrapHandlers)
 }
 
 /**
