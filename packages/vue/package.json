@@ -1,0 +1,14 @@
+{
+  "name": "vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "hens",
+  "license": "MIT",
+  "dependencies": {
+    "@mini-vue/compiler-dom": "workspace:^1.0.0",
+    "@mini-vue/runtime-dom": "workspace:^1.0.0",
+    "@mini-vue/shared": "workspace:^1.0.0"
+  }
+}

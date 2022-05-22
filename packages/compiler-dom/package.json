@@ -1,0 +1,12 @@
+{
+  "name": "@mini-vue/compiler-dom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "keywords": [],
+  "author": "hens",
+  "license": "MIT",
+  "dependencies": {
+    "@mini-vue/compiler-core": "workspace:^1.0.0"
+  }
+}
