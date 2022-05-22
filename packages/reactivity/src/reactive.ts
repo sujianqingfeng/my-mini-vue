@@ -1,4 +1,4 @@
-import { isObject } from "../../shared/src"
+import { isObject } from "@mini-vue/shared"
 import {
   mutableHandles,
   readonlyHandles,
@@ -100,6 +100,6 @@ export function isProxy(value: unknown): boolean {
  * @param value
  * @returns
  */
-export function toReactive<T extends unknown>(value: T): T {
+export const toReactive = <T extends unknown>(value: T): T => {
   return isObject(value) ? reactive(value) : value
 }

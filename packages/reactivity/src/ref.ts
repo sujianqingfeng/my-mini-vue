@@ -8,11 +8,8 @@ import {
 } from "./effect"
 import { toReactive } from "./reactive"
 
-declare const RefSymbol: unique symbol
-
 export interface Ref<T = any> {
   value: T
-  [RefSymbol]: true
 }
 
 // Ref 实现
@@ -31,7 +28,7 @@ class RefImpl<T> {
   public dep?: Dep = undefined
   // ref 标识
   public readonly __v_isRef = true
-  constructor(value) {
+  constructor(value: T) {
     this._rawValue = value
     this._value = toReactive(value)
     this.dep = new Set()
@@ -54,6 +51,10 @@ class RefImpl<T> {
     }
   }
 }
+
+export function ref<T extends object>(value: T): Ref<UnwrapRef<T>>
+export function ref<T>(value: T): Ref<UnwrapRef<T>>
+export function ref<T = any>(): Ref<T | undefined>
 
 /**
  * 创建单值的响应式
@@ -132,3 +133,11 @@ function trackRefValue(ref: RefBase<any>) {
     trackEffects(ref.dep || (ref.dep = createDep()))
   }
 }
+
+export type UnwrapRef<T> = UnwrapRefSimple<T>
+
+export type UnwrapRefSimple<T> = T extends object
+  ? {
+      [P in keyof T]: UnwrapRef<T[P]>
+    }
+  : T

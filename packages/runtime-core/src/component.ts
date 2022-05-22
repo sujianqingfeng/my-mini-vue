@@ -4,6 +4,13 @@ import { initProps } from "./componentProps"
 import { componentPublicHandler } from "./componentPublicInstance"
 import { initSlots } from "./componentSlots"
 
+export interface ComponentInternalInstance {
+  parent: ComponentInternalInstance | null
+  vnode: any
+  next: any
+  provides: any
+}
+
 export function createComponentInstance(vnode, parent) {
   const instance = {
     vnode,
@@ -73,7 +80,7 @@ function finishComponentSetup(instance: any) {
   instance.render = Component.render
 }
 
-let currentInstance = null
+let currentInstance: ComponentInternalInstance | null = null
 
 function setCurrentInstance(instance) {
   currentInstance = instance

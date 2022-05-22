@@ -1,14 +1,26 @@
-import { NodeTypes } from "./ast";
-import { TO_DISPLAY_STRING } from "./runtimeHelpers";
+import { NodeTypes, RootNode } from "./ast"
+import { TransformOptions } from "./options"
+import { TO_DISPLAY_STRING } from "./runtimeHelpers"
 
-export function transform(root, options = {}) {
-  const context = createTransformContext(root, options);
+export type NodeTransform = (
+  node: any,
+  context: TransformContext
+) => void | (() => void) | (() => void)[]
 
-  traverseNode(root, context);
+export interface TransformContext extends Required<TransformOptions> {
+  root: RootNode
+  helpers: Map<symbol, number>
+  helper<T extends symbol>(name: T): T
+}
 
-  createRootCodegen(root);
+export function transform(root: any, options = {}) {
+  const context = createTransformContext(root, options)
 
-  root.helpers = [...context.helpers.keys()];
+  traverseNode(root, context)
+
+  createRootCodegen(root)
+
+  root.helpers = [...context.helpers.keys()]
 }
 
 /**
@@ -17,11 +29,11 @@ export function transform(root, options = {}) {
  * @param root
  */
 function createRootCodegen(root: any) {
-  const child = root.children[0];
+  const child = root.children[0]
   if (child.type === NodeTypes.ELEMENT) {
-    root.codegenNode = child.codegenNode;
+    root.codegenNode = child.codegenNode
   } else {
-    root.codegenNode = child;
+    root.codegenNode = child
   }
 }
 
@@ -31,38 +43,37 @@ function createRootCodegen(root: any) {
  * @param node
  * @param context
  */
-function traverseNode(node: any, context) {
+function traverseNode(node: any, context: TransformContext) {
   // 执行处理函数
-  const onExits = [];
-  const { nodeTransforms } = context;
+  const exitFns: any = []
+  const { nodeTransforms } = context
   for (let i = 0; i < nodeTransforms.length; i++) {
-    const transform = nodeTransforms[i];
-    const onExit = transform(node, context);
+    const onExit = nodeTransforms[i](node, context)
     // 如果返回的是一个函数，代表后执行
     if (onExit) {
-      onExits.push(onExit);
+      exitFns.push(onExit)
     }
   }
 
   switch (node.type) {
     case NodeTypes.INTERPOLATION:
-      context.helper(TO_DISPLAY_STRING);
-      break;
+      context.helper(TO_DISPLAY_STRING)
+      break
 
     case NodeTypes.ROOT:
     case NodeTypes.ELEMENT:
       // 遍历子节点
-      traverseChildren(node, context);
-      break;
+      traverseChildren(node, context)
+      break
 
     default:
-      break;
+      break
   }
 
   // 后执行函数
-  let i = onExits.length;
+  let i = exitFns.length
   while (i--) {
-    onExits[i]();
+    exitFns[i]()
   }
 }
 
@@ -73,9 +84,9 @@ function traverseNode(node: any, context) {
  * @param context
  */
 function traverseChildren(node: any, context: any) {
-  const children = node.children;
+  const children = node.children
   for (let i = 0; i < children.length; i++) {
-    traverseNode(children[i], context);
+    traverseNode(children[i], context)
   }
 }
 
@@ -87,14 +98,15 @@ function traverseChildren(node: any, context: any) {
  * @returns
  */
 function createTransformContext(root, options) {
-  const context = {
+  const context: TransformContext = {
     root,
     nodeTransforms: options.nodeTransforms || [],
     helpers: new Map(),
-    helper(key) {
-      context.helpers.set(key, 1);
+    helper(name) {
+      context.helpers.set(name, 1)
+      return name
     },
-  };
+  }
 
-  return context;
+  return context
 }

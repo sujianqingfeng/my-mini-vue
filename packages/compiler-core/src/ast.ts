@@ -1,4 +1,8 @@
-import { CREATE_ELEMENT_VNODE } from "./runtimeHelpers";
+import { CREATE_ELEMENT_VNODE } from "./runtimeHelpers"
+
+export interface RootNode {
+  codegenNode?: any
+}
 
 export const enum NodeTypes {
   INTERPOLATION,
@@ -19,11 +23,11 @@ export const enum NodeTypes {
  * @returns
  */
 export function createVNodeCall(context, tag, props, children) {
-  context.helper(CREATE_ELEMENT_VNODE);
+  context.helper(CREATE_ELEMENT_VNODE)
   return {
     type: NodeTypes.ELEMENT,
     tag,
     props,
     children,
-  };
+  }
 }

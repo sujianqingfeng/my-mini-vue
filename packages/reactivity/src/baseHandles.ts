@@ -1,10 +1,9 @@
-import { isObject, extend } from "@mini-vue/shared"
-import { track, trigger } from "./effect"
 import { reactive, ReactiveFlags, readonly, Target } from "./reactive"
+import { track, trigger } from "./effect"
+import { isObject, extend } from "@mini-vue/shared"
 
 // 全局变量  只执行一次
 const get = createGetter()
-const set = createSetter()
 const readonlyGet = createGetter(true)
 const shallowReadonlyGet = createGetter(true, true)
 
@@ -41,6 +40,8 @@ function createGetter(isReadonly = false, shallow = false) {
     return res
   }
 }
+
+const set = createSetter()
 
 /**
  * 创建set函数
